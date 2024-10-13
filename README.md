@@ -1,4 +1,4 @@
-use powershell to install UWP app whether as bulk or single package
+use powershell script to install UWP app whether as bulk or single package run them in the directory containing your UWP packages
 
 1. Script "UWP-Current-user-install-prompts.ps1"
 
@@ -15,3 +15,4 @@ This script installs UWP packages for all users using Add-AppxProvisionedPackage
 4. Script "UWP-allusers-install.ps1"
 
 This script installs UWP packages for all users using Add-AppxProvisionedPackage, but prompts the user only once to install all found packages.
+
