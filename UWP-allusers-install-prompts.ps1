@@ -36,3 +36,6 @@ foreach ($package in $packages) {
         Write-Host "Skipping installation of $($package.Name)."
     }
 }
+
+# Keep the script open after completion
+Read-Host "Press Enter to exit..."

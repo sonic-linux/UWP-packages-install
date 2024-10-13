@@ -1,23 +1,23 @@
-﻿# Check if the script is running with admin privileges
+﻿# Check if the script is running with admin rights
 function Test-Admin {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
     return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-# Restart the script with admin privileges if not already running as admin
+# If not running as admin, try to restart as admin
 if (-not (Test-Admin)) {
     try {
         Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
         exit
     } catch {
-        Write-Host "Failed to obtain administrative privileges. Exiting script." -ForegroundColor Red
-        exit 1
+        Write-Error "Failed to run as administrator. Please run this script with elevated privileges."
+        exit
     }
 }
 
 # Get the directory of the script
-$scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Find all MSIX, APPX, MSIXBUNDLE, and APPXBUNDLE files
 $packages = Get-ChildItem -Path $scriptDir -Include *.msix, *.appx, *.msixbundle, *.appxbundle -Recurse
@@ -38,9 +38,12 @@ if ($confirmation -ne 'Y' -and $confirmation -ne 'y') {
 # Install each package
 foreach ($package in $packages) {
     try {
-        Add-AppxProvisionedPackage -PackagePath $package.FullName -Online
+        Add-AppxProvisionedPackage -PackagePath $package.FullName -Online -SkipLicense
         Write-Host "Successfully installed: $($package.Name)" -ForegroundColor Green
     } catch {
         Write-Host "Failed to install: $($package.Name). Error: $_" -ForegroundColor Red
     }
 }
+
+# Keep the script open after completion
+Read-Host "Press Enter to exit..."

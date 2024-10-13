@@ -28,3 +28,6 @@ if ($response -eq 'Y' -or $response -eq 'y') {
 } else {
     Write-Output "Installation canceled."
 }
+
+# Keep the script open after completion
+Read-Host "Press Enter to exit..."
